@@ -48,7 +48,9 @@ stages:
         displayName: 'run calc'
         inputs:
           filePath: 'calc.sh'
-        
+
+#Third Stage on Windows QA
+
 - stage: WindowsQAEnvCheck
   dependsOn: UbuntuQAEnvCheck
   condition: succeeded()
@@ -67,6 +69,7 @@ stages:
         echo See https://www.kavinschool.com/content/
       displayName: 'Run a multi-line script'
 
+#Fourth Stage on Windows Prod
 
 - stage: WindowsProdEnvCheck
   dependsOn: UbuntuProdEnvCheck
@@ -86,3 +89,4 @@ stages:
       inputs:
         filename: 'calc.bat'
         arguments: '300 100'
+        
