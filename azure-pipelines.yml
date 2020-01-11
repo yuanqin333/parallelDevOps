@@ -44,6 +44,12 @@ stages:
   - job: ExternalScripts
     pool:
       vmImage: 'ubuntu-latest'
+     # these variables only available in ExternalScripts job
+    variables:
+      FIRST: 100
+      SECOND: 20
+      OPERATION: 4
+
     steps:
       - checkout: KangsBashCalcRepo
       - task: Bash@3
@@ -90,7 +96,7 @@ stages:
   - WindowsQAEnvCheck
   condition: succeeded()
   jobs:
-  - job: InternalScripts
+  - job: ExternalScripts
     pool:
       vmImage: 'windows-latest'
     steps:
