@@ -32,7 +32,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-      - checkout: git@github.com:kpassoubady/winBatch.git
+      - checkout: github://kavyateck/git@github.com:kpassoubady/winBatch.git
       - task: Bash@3
         displayName: 'install bc'
         inputs:
