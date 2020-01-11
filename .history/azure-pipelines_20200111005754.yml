@@ -1,0 +1,83 @@
+
+trigger:
+- master
+
+#Muliple Stages with multiple jobs
+#Different OS and different github repo
+stages:
+- stage: UbuntuQAEnvCheck
+  jobs:
+  - job: InlineScripts
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - checkout: none
+    - script: echo Hello, world!
+      displayName: 'Run a one-line script'
+
+    - script: |
+        echo Add other tasks to build, test, and deploy your project.
+        echo See https://aka.ms/yaml
+      displayName: 'Run a multi-line script'
+
+- stage: UbuntuProdEnvCheck
+  dependsOn: UbuntuQAEnvCheck
+  condition: succeeded()
+  jobs:
+  - job: ExternalScripts
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - task: Bash@3
+        displayName: 'install bc'
+        inputs:
+          targetType: 'inline'
+          script: |
+            # Write your commands here
+            
+            echo 'installation starts'
+            sudo apt-get install bc
+            echo 'installation ends'
+
+      - task: Bash@3
+        displayName: 'run calc'
+        inputs:
+          filePath: 'calc.sh'
+        
+- stage: WindowsQAEnvCheck
+  dependsOn: UbuntuQAEnvCheck
+  condition: succeeded()
+  jobs:
+  - job: InternalScripts
+
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+  checkout: none
+  - script: echo Hello, world!
+    displayName: 'Run a one-line script'
+
+  - script: |
+      echo Add other tasks to build, test, and deploy your project.
+      echo See https://aka.ms/yaml
+    displayName: 'Run a multi-line script'
+
+
+  - stage: WindowsProdEnvCheck
+    dependsOn: UbuntuProdEnvCheck
+    condition: succeeded()
+    jobs:
+    - job: InternalScripts
+    steps:
+    checkout: none
+  - task: BatchScript@1
+    inputs:
+      filename: 'power.bat'
+      arguments: '3 4'
+
+  - task: BatchScript@1
+    inputs:
+      filename: 'calc.bat'
+      arguments: '300 100'
+	
