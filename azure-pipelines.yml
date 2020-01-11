@@ -60,7 +60,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
-    - checkout: git@github.com:kpassoubady/bashCalc.git
+    - checkout: none
     - script: echo Hello, world!
       displayName: 'Run a one-line script'
 
