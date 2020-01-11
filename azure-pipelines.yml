@@ -85,7 +85,9 @@ stages:
 #Fourth Stage on Windows Prod
 
 - stage: WindowsProdEnvCheck
-  dependsOn: UbuntuProdEnvCheck
+  dependsOn: 
+  - UbuntuProdEnvCheck
+  - WindowsQAEnvCheck
   condition: succeeded()
   jobs:
   - job: InternalScripts
