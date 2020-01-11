@@ -110,4 +110,15 @@ stages:
       inputs:
         filename: 'calc.bat'
         arguments: '300 100'
-        
+
+#Fifth Stage on Mac OS
+- stage: MacQACheck
+  dependsOn: 
+  - WindowsProdEnvCheck
+  jobs:
+  - job: macOS
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+    - checkout: none
+    - script: echo hello from macOS
