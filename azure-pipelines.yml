@@ -1,3 +1,16 @@
+resources:
+  repositories:
+  # The name used to reference this repository in the checkout step
+  - repository: KangsBashCalcRepo 
+    type: github
+    endpoint: kangsGitHub
+    name: kpassoubady/bashCalc
+# The name used to reference this repository in the checkout step
+  - repository: KangsWindowsBatchRepo
+    type: github
+    endpoint: kangsGitHub
+    name: kpassoubady/winBatch
+
 
 trigger:
 - master
@@ -32,7 +45,7 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
     steps:
-      - checkout: github://kavyateck/git@github.com:kpassoubady/winBatch.git
+      - checkout: KangsBashCalcRepo
       - task: Bash@3
         displayName: 'install bc'
         inputs:
@@ -79,7 +92,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
-    - checkout: git@github.com:kpassoubady/bashCalc.git
+    - checkout: KangsWindowsBatchRepo
     - task: BatchScript@1
       inputs:
         filename: 'power.bat'
