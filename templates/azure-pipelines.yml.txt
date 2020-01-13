@@ -1,3 +1,16 @@
+resources:
+  repositories:
+  # The name used to reference this repository in the checkout step
+  - repository: KangsBashCalcRepo 
+    type: github
+    endpoint: kangsGitHub
+    name: kpassoubady/bashCalc
+# The name used to reference this repository in the checkout step
+  - repository: KangsWindowsBatchRepo
+    type: github
+    endpoint: kangsGitHub
+    name: kpassoubady/winBatch
+
 
 trigger:
 - master
@@ -31,8 +44,14 @@ stages:
   - job: ExternalScripts
     pool:
       vmImage: 'ubuntu-latest'
+     # these variables only available in ExternalScripts job
+    variables:
+      FIRST: 100
+      SECOND: 20
+      OPERATION: 4
+
     steps:
-      - checkout: git@github.com:kpassoubady/winBatch.git
+      - checkout: KangsBashCalcRepo
       - task: Bash@3
         displayName: 'install bc'
         inputs:
@@ -48,7 +67,9 @@ stages:
         displayName: 'run calc'
         inputs:
           filePath: 'calc.sh'
-        
+
+#Third Stage on Windows QA
+
 - stage: WindowsQAEnvCheck
   dependsOn: UbuntuQAEnvCheck
   condition: succeeded()
@@ -58,7 +79,7 @@ stages:
     pool:
       vmImage: 'windows-latest'
     steps:
-    - checkout: git@github.com:kpassoubady/bashCalc.git
+    - checkout: none
     - script: echo Hello, world!
       displayName: 'Run a one-line script'
 
@@ -67,16 +88,19 @@ stages:
         echo See https://www.kavinschool.com/content/
       displayName: 'Run a multi-line script'
 
+#Fourth Stage on Windows Prod
 
 - stage: WindowsProdEnvCheck
-  dependsOn: UbuntuProdEnvCheck
+  dependsOn: 
+  - UbuntuProdEnvCheck
+  - WindowsQAEnvCheck
   condition: succeeded()
   jobs:
-  - job: InternalScripts
+  - job: ExternalScripts
     pool:
       vmImage: 'windows-latest'
     steps:
-    - checkout: git@github.com:kpassoubady/bashCalc.git
+    - checkout: KangsWindowsBatchRepo
     - task: BatchScript@1
       inputs:
         filename: 'power.bat'
@@ -86,3 +110,43 @@ stages:
       inputs:
         filename: 'calc.bat'
         arguments: '300 100'
+
+#Fifth Stage on Mac OS
+- stage: MacQACheck
+  dependsOn: 
+  - WindowsProdEnvCheck
+  jobs:
+  - job: macOS
+    pool:
+      vmImage: 'macOS-latest'
+    steps:
+    - checkout: none
+    - script: echo hello from macOS
+      displayName: 'Single line script for macOS'
+
+    - script: |
+        echo Learning is fun, enquire below.
+        echo See https://www.kavinschool.com/content/
+      displayName: 'Run a multi-line script for macOS'
+
+
+#Sixth Stage on Mac OS Prod
+- stage: MacProdCheck
+  dependsOn: MacQACheck
+  condition: succeeded()
+  jobs:
+  - job: ExternalScripts
+    pool:
+      vmImage: 'macOS-latest'
+     # these variables only available in ExternalScripts job of MacQACheck
+    variables:
+      FIRST: 100
+      SECOND: 20
+      OPERATION: 4
+
+    steps:
+      - checkout: KangsBashCalcRepo
+      - task: Bash@3
+        displayName: 'run calc'
+        inputs:
+          filePath: 'calc.sh'
