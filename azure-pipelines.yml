@@ -3,17 +3,38 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+resources:
+  repositories:
+  # The name used to reference this repository in the checkout step
+  - repository: BashCalcRepo 
+    type: github
+    endpoint: qinjusGithub
+    name: yuanqin333/bashCalc
+# The name used to reference this repository in the checkout step
+  - repository: WindowsBatchRepo
+    type: github
+    endpoint: qinjusGithub
+    name: yuanqin333/winBatch
+
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+  - 
+#First Stage on Ubuntu
+- stage: UbuntuQAEnvCheck
+  jobs:
+  - job: InlineScripts
+  
+      pool:
+        vmImage: 'ubuntu-latest'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+      steps:
+        checkout: none
+      - script: echo Hello, world!
+        displayName: 'Run a one-line script'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+      - script: |
+          echo Add other tasks to build, test, and deploy your project.
+          echo See https://aka.ms/yaml
+        displayName: 'Run a multi-line script'
